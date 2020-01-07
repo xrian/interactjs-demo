@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Title</title>
+  <style>
+    .text-center {
+      text-align: center;
+    }
+
+    .green {
+      color: #0b8235;
+    }
+
+    .setting-wrapper {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .add-device-modal {
+      display: none;
+      position: fixed;
+      background-color: rgba(134, 130, 130, 0.8);
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .add-device-modal .add-device-form {
+      position: absolute;
+      background-color: #fff;
+      left: 50%;
+      top: 50%;
+      width: 240px;
+      height: 160px;
+      padding: 10px 50px;
+      margin-left: -120px;
+      margin-top: -80px;
+    }
+
+    .add-device-modal .add-device-form > div {
+      margin-top: 10px;
+    }
+
+    .add-device-modal .add-device-form .close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 5px;
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+
+    .body {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+    }
+
+    .body .operator-wrapper {
+      flex-basis: 200px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+
+    .body .operator-wrapper .title {
+      position: relative;
+      height: 30px;
+    }
+
+    .body .operator-wrapper .title .operator-add {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .body .operator-wrapper .device-list-wrapper {
+      min-height: 300px;
+      overflow-y: scroll;
+    }
+
+    .body .operator-wrapper .device-list-wrapper .device-wrapper {
+      background-color: #cccccc;
+      margin-top: 5px;
+      padding: 5px;
+    }
+
+    .body .main-wrapper {
+      border: 1px solid #ccc;
+      margin: 10px;
+      position: relative;
+    }
+
+    .body .main-wrapper .main {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .body .main-wrapper .background-image-div {
+      background-image: url("../images/6aedf07074a3183023e855c5729757eb--open-kitchen-restaurant-restaurant-layout.jpg");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      z-index: -1;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+<div id="addDeviceModal" class="add-device-modal">
+  <div class="add-device-form">
+    <div class="close">
+      <button type="button" id="closeAddDeviceBtn">X</button>
+    </div>
+    <div class="text-center">新增设备</div>
+    <div>设备名称:<input type="text" id="deviceName" maxlength="50"></div>
+    <div>
+      选择设备类型:
+      <select id="deviceTypeSelect"></select>
+    </div>
+    <div class="text-center">
+      <button type="button" id="AddDeviceBtn">新增</button>
+    </div>
+  </div>
+</div>
+<div id="settingWrapper" class="setting-wrapper">
+  <div class="title">设置面积</div>
+  <div>
+    <div>长:<input type="number" name="roomLength" id="roomLength" value="500"></div>
+    <div>宽:<input type="number" name="roomWidth" id="roomWidth" value="800"></div>
+    <button type="button" id="changeArea">改变面积大小</button>
+  </div>
+  <div>
+    设置背景图片
+    <input type="file" name="backgroundImage" id="backgroundImage" accept="image/*" />
+  </div>
+  <div>调整背景图片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.5"></div>
+</div>
+
+<div class="body">
+  <div class="operator-wrapper">
+    <div class="title">
+      <div class="text-center">
+        设备列表
+      </div>
+      <div class="operator-add">
+        <button id="showAddDeviceBtn" type="button">新增</button>
+      </div>
+    </div>
+    <div id="deviceListWrapper" class="device-list-wrapper">
+
+    </div>
+  </div>
+  <div id="mainWrapper" class="main-wrapper">
+    <div class="main" id="main"></div>
+    <div class="background-image-div"></div>
+  </div>
+</div>
+
+<script type="text/javascript" src="../js/jquery-1.12.4.min.js"></script>
+<script>
+  // 初始化设备列表.如果需要页面加载后显示,则设置该对象的值
+  var initDeviceData = [
+    {
+      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      id: -1,
+      name: '张淞\'s 小米米家智能摄像头',
+      type: 'camera',
+    },
+  ];
+
+  // 新增设备时的下拉框选项
+  var deviceTypeMap = {
+    monitor: '显示器',
+    camera: '摄像头',
+    sound: '音响',
+  };
+  // 使用自增 ID 作为每个新增设备的唯一标识
+  var deviceSerialNumber = 0;
+  var backgroundImageDivDom = $('.background-image-div');
+  var addDeviceModalDom = $('#addDeviceModal');
+  var deviceListWrapperDom = $('#deviceListWrapper');
+  var mainDom = $('#main');
+  // 设备对象.
+  var devices = {};
+  // 将初始化数据列表转换为 object,ID 为 key
+  for (var index in initDeviceData) {
+    var item = initDeviceData[index];
+    devices[item.id] = item;
+  }
+
+  // 改变面积
+  function changeArea() {
+    var height = $('#roomLength').val();
+    var width = $('#roomWidth').val();
+    if (isNaN(height) || height < 300) {
+      alert('面积长必须大于300');
+      return;
+    }
+    if (isNaN(width) || width < 300) {
+      alert('面积宽必须大于300');
+      return;
+    }
+    mainDom.width(width + 'px').height(height + 'px');
+    backgroundImageDivDom.width(width + 'px').height(height + 'px');
+  }
+
+  // 清除新增设备表单并关闭模态窗
+  function closeAddDeviceModal() {
+    $('#deviceName').val('');
+    $('#deviceTypeSelect').val('');
+    addDeviceModalDom.hide();
+  }
+
+  // 同步 devices 数组中的值到页面的设备列表
+  function syncDevices() {
+    for (var key in devices) {
+      var item = devices[key];
+      if (!item.dom) {
+        // 如果对象中不存在 dom 对象,则创建 dom 对象并显示在页面中
+        var dom = $('<div class="device-wrapper" id="device-' + key + '" data-id="' + key + '">' +
+          '<div class="device-name"><span>设备名称:</span><span class="green">' + item.name + '</span></div>' +
+          '<div class="device-type"><span>设备类型:</span><span class="green">' + deviceTypeMap[item.type] +
+          '</span></div>' +
+          '<div><button type="button" class="show-location">查看位置</button><button type="button" class="delete">删除</button></div>' +
+          '</div>');
+        deviceListWrapperDom.append(dom);
+        item.dom = dom;
+      }
+    }
+  }
+
+  $(function () {
+    // 初始化面积 div
+    changeArea();
+    // 初始化设备下拉框
+    var deviceTypeHtml = '';
+    for (var item in deviceTypeMap) {
+      deviceTypeHtml += '<option value="' + item + '">' + deviceTypeMap[item] + '</option>';
+    }
+    $('#deviceTypeSelect').html(deviceTypeHtml);
+
+    // 初始化设备数据
+    syncDevices();
+
+    // 改变宽高
+    $('#changeArea').on('click', function () {
+      changeArea();
+    });
+    // 设置背景图片透明度
+    $('#opacity').on('change', function (e) {
+      e.preventDefault();
+      mainDom.css('background-color', 'rgba(255, 255, 255, ' + this.value + ')');
+    });
+    // 设置背景图片
+    $('#backgroundImage').on('change', function (e) {
+      e.preventDefault();
+      var file = this.files[0];
+      if (file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          var imgSrc = this.result;
+          backgroundImageDivDom.css('background-image', 'url(' + imgSrc + ')');
+        };
+      }
+    });
+    // 显示新增设备模态框
+    $('#showAddDeviceBtn').on('click', function () {
+      addDeviceModalDom.show();
+    });
+    // 关闭新增设备模态框
+    $('#closeAddDeviceBtn').on('click', function () {
+      closeAddDeviceModal();
+    });
+    // 新增设备
+    $('#AddDeviceBtn').on('click', function () {
+      var deviceName = $('#deviceName').val();
+      var deviceType = $('#deviceTypeSelect').val();
+      if (!deviceName) {
+        alert('请填写设备名称');
+        return;
+      }
+      if (!deviceType) {
+        alert('请选择设备类型');
+        return;
+      }
+      var device = {
+        id: deviceSerialNumber++,
+        name: deviceName,
+        type: deviceType,
+      };
+      devices[device.id] = device;
+      syncDevices();
+      closeAddDeviceModal();
+    });
+    // 删除设备按钮
+    deviceListWrapperDom.on('click', '.delete', function (e) {
+      e.preventDefault();
+      var wrapperDom = this.parentNode.parentNode;
+      debugger
+//      var wrapperDom = $(this).parent('.device-wrapper');
+      var id = wrapperDom.getAttribute('data-id');
+      var obj = devices[id];
+      if (obj) {
+        // 根据ID查询,如果存在对应的选项,则从device中删除,并释放拖拽对象
+
+      }
+      wrapperDom.remove();
+    });
+  });
+</script>
+</body>
+</html>
