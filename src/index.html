@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Title</title>
   <style>
+    * {
+      /* 禁止触摸屏事件 */
+      touch-action: none;
+      user-select: none;
+    }
+
     .text-center {
       text-align: center;
     }
@@ -78,16 +84,26 @@
       right: 0;
     }
 
-    .body .operator-wrapper .device-list-wrapper {
+    .body .operator-wrapper .container {
       min-height: 300px;
-      overflow-y: scroll;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .body .operator-wrapper .container .device-list-wrapper{
+
+      display: flex;
+      flex-wrap: wrap;
+      width: 200px;
     }
 
     .body .operator-wrapper .device-list-wrapper .device-wrapper {
+      width: 100%;
       background-color: #cccccc;
       margin-top: 5px;
       padding: 5px;
     }
+
 
     .body .main-wrapper {
       border: 1px solid #ccc;
@@ -151,9 +167,12 @@
         <button id="showAddDeviceBtn" type="button">新增</button>
       </div>
     </div>
-    <div id="deviceListWrapper" class="device-list-wrapper">
+    <div class="container">
+      <div id="deviceListWrapper" class="device-list-wrapper">
 
+      </div>
     </div>
+
   </div>
   <div id="mainWrapper" class="main-wrapper">
     <div class="main" id="main"></div>
@@ -162,6 +181,8 @@
 </div>
 
 <script type="text/javascript" src="../js/jquery-1.12.4.min.js"></script>
+<script src="../js/interact.min.js"></script>
+<script src="../js/draggable.js"></script>
 <script>
   // 初始化设备列表.如果需要页面加载后显示,则设置该对象的值
   var initDeviceData = [
@@ -222,7 +243,7 @@
       var item = devices[key];
       if (!item.dom) {
         // 如果对象中不存在 dom 对象,则创建 dom 对象并显示在页面中
-        var dom = $('<div class="device-wrapper" id="device-' + key + '" data-id="' + key + '">' +
+        var dom = $('<div class="device-wrapper draggable" id="device-' + key + '" data-id="' + key + '">' +
           '<div class="device-name"><span>设备名称:</span><span class="green">' + item.name + '</span></div>' +
           '<div class="device-type"><span>设备类型:</span><span class="green">' + deviceTypeMap[item.type] +
           '</span></div>' +
@@ -302,8 +323,6 @@
     deviceListWrapperDom.on('click', '.delete', function (e) {
       e.preventDefault();
       var wrapperDom = this.parentNode.parentNode;
-      debugger
-//      var wrapperDom = $(this).parent('.device-wrapper');
       var id = wrapperDom.getAttribute('data-id');
       var obj = devices[id];
       if (obj) {
