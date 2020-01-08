@@ -64,6 +64,7 @@
       display: flex;
       flex-wrap: nowrap;
       align-items: flex-start;
+      z-index: 1;
     }
 
     .body .operator-wrapper {
@@ -87,7 +88,8 @@
     .body .operator-wrapper .container {
       min-height: 300px;
       max-height: 500px;
-      overflow-y: auto;
+      /*overflow-y: auto;*/
+      /*overflow-x: hidden;*/
     }
 
     .body .operator-wrapper .container .device-list-wrapper{
@@ -99,6 +101,7 @@
 
     .body .operator-wrapper .device-list-wrapper .device-wrapper {
       width: 100%;
+      /*z-index: 1;*/
       background-color: #cccccc;
       margin-top: 5px;
       padding: 5px;
@@ -124,6 +127,14 @@
       top: 0;
       left: 0;
     }
+
+    /* 摆放区的统计 */
+    .body .main .flag{
+      display: inline-block;
+      padding: 2px;
+      font-size: 12px;
+    }
+
   </style>
 </head>
 <body>
