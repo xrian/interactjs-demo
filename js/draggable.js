@@ -13,10 +13,12 @@ const position = { x: 0, y: 0 };
 
 interact.dynamicDrop(true);
 
-// 标记当前拖动元素是否在放置区外
+// 標記當前拖動元素是否在放置區外
 var isDragLeave = false;
+var startX = 0;
+var startY = 0;
 
-// 隐藏摆放区设备列表
+// 隱藏擺放區設備列表
 function hiddenMainDeviceListModal() {
   var lists = mainDom.find('.main-device-list-modal');
   if (lists.length > 0) {
@@ -38,17 +40,17 @@ function hiddenMainDeviceListModal() {
 }
 
 $(function () {
-  // 点击隐藏按钮,将全部设备列表都隐藏
+  // 點擊隱藏按鈕,將全部設備列表都隱藏
   mainDom.on('click', '.hidden-device-list', function (e) {
     e.preventDefault();
     hiddenMainDeviceListModal();
   });
-  // 移除该设备
+  // 移除該設備
   mainDom.on('click', '.remove', function (e) {
     e.preventDefault();
-    // 获取到当前点击设备最外层div
+    // 獲取到當前點擊設備最外層div
     var dom = this.parentNode.parentNode;
-    // 获取到列表 dom
+    // 獲取到列表 dom
     var listDom = dom.parentNode;
     var id = dom.getAttribute('data-id');
     var device = devices[id];
@@ -60,14 +62,14 @@ $(function () {
     if (leftoverDevices.length > 0) {
       listDom.querySelector('.total').textContent = leftoverDevices.length;
     } else {
-      // 没有剩下的设备了,清除该div
+      // 沒有剩下的設備了,清除該div
       listDom.remove();
     }
     syncDevices();
   });
 });
 
-// 设置可以放置区域
+// 設置可以放置區域
 interact('#main')
   .dropzone({
     dragleave: function (event) {
@@ -82,42 +84,44 @@ interact('#main')
   });
 
 function moveEnd(event) {
-  console.log('拖动结束', event);
+  console.log('拖動結束', event);
   var target = event.target;
   if (isDragLeave) {
-    // 重置标记
+    // 重置標記
     isDragLeave = false;
-    // 如果不在main里,提示是否删除
-    var flag = window.confirm('你确定从摆放区移除该设备吗?');
+    // 如果不在main里,提示是否刪除
+    var flag = window.confirm('你確定從擺放區移除該設備嗎?');
     if (flag) {
       var id = target.getAttribute('data-group-id');
 
       for (var item in devices) {
         var device = devices[item];
         if (device.groupId == id) {
-          // 将设备列表中对应的设备重新设置为可以拖动
+          // 將設備列表中對應的設備重新設置為可以拖動
           var deviceDom = device.dom;
           deviceDom.classList.add('draggable');
           device.groupId = null;
         }
       }
-      // 删除该元素
+      // 刪除該元素
       target.remove();
     } else {
-      // 删除提示框
+      // 刪除提示框
       var tips = target.querySelector('p');
       tips && tips.remove();
-      // 更新位置属性,默认放置在摆放区起始位置
-      moveDomByCss(target, target.x0, target.y0);
+      // 更新位置屬性,默認放置在擺放區起始位置
+      moveDomByCss(target, startX, startY);
+      startX = 0;
+      startY = 0;
     }
   }
 }
 
-// 分组可以拖动
+// 分組可以拖動
 var interactGroup = interact('.group').draggable({
-    // 拖动使用惯性
+    // 拖動使用慣性
     inertia: false,
-    // 当拖动到浏览器窗口边缘时,滚动窗口
+    // 當拖動到瀏覽器窗口邊緣時,滾動窗口
     autoScroll: true,
     // keep the element within the area of it's parent
     modifiers: [
@@ -130,14 +134,14 @@ var interactGroup = interact('.group').draggable({
     onmove: function (event) {
       var target = event.target;
       if (event.dragLeave) {
-        target.appendChild($('<p class="white">鼠标放下移除该设备</p>')[0]);
-        // 标记该元素被脱离父元素
+        target.appendChild($('<p class="white">鼠標放下移除該設備</p>')[0]);
+        // 標記該元素被脫離父元素
         isDragLeave = true;
       }
       if (event.dragEnter) {
         var tips = target.querySelector('p');
         tips && tips.remove();
-        // 标记该元素被脱离父元素
+        // 標記該元素被脫離父元素
         isDragLeave = false;
       }
 
@@ -150,10 +154,13 @@ var interactGroup = interact('.group').draggable({
   })
   .on('dragstart', function (event) {
     hiddenMainDeviceListModal();
-    console.log('开始拖动数字', event);
+    var target = event.target;
+    startX = target.getAttribute('data-x');
+    startY = target.getAttribute('data-y');
+    console.log('開始拖動數字', event);
   })
   .on('dragend', moveEnd)
-  // 双击展开设备列表详情
+  // 雙擊展開設備列表詳情
   .on('doubletap', function (event) {
     event.preventDefault();
     hiddenMainDeviceListModal();
@@ -168,23 +175,23 @@ var interactGroup = interact('.group').draggable({
       if (obj.groupId == groupId) {
         total += 1;
         html += '<div class="device-wrapper main-draggable" data-id="' + obj.id + '">' +
-          '<div class="device-name"><span>设备名称:</span><span class="green">' + obj.name + '</span></div>' +
-          '<div class="device-type"><span>设备类型:</span><span class="green">' + deviceTypeMap[obj.type] +
+          '<div class="device-name"><span>設備名稱:</span><span class="green">' + obj.name + '</span></div>' +
+          '<div class="device-type"><span>設備類型:</span><span class="green">' + deviceTypeMap[obj.type] +
           '</span></div>' +
-          '<div><button type="button" class="remove">移除设备</button></div>' +
+          '<div><button type="button" class="remove">移除設備</button></div>' +
           '</div>';
       }
     }
-    html = '<div><button type="button" class="hidden-device-list">隐藏</button></div><div class="title"><span>当前位置共<span class="total">' + total + '</span>台设备</span></div>' + html;
+    html = '<div><button type="button" class="hidden-device-list">隱藏</button></div><div class="title"><span>當前位置共<span class="total">' + total + '</span>台設備</span></div>' + html;
     $(target).html(html);
   });
 
 interact('.draggable').draggable({
-    // 拖动使用惯性
+    // 拖動使用慣性
     inertia: false,
-    // 当拖动到浏览器窗口边缘时,滚动窗口
+    // 當拖動到瀏覽器窗口邊緣時,滾動窗口
     autoScroll: true,
-    // 忽略 button 上面的拖动事件
+    // 忽略 button 上面的拖動事件
     ignoreFrom: 'button',
     modifiers: [
 //      interact.modifiers.restrictRect({
@@ -192,20 +199,20 @@ interact('.draggable').draggable({
 //        endOnly: true,
 //      }),
     ],
-    // 启用手动控制
+    // 啓用手動控制
     manualStart: true,
     onmove: function (event) {
       var target = event.target;
 
       if (event.dragLeave) {
-        target.appendChild($('<p class="white">鼠标放下移除该设备</p>')[0]);
-        // 标记该元素被脱离父元素
+        target.appendChild($('<p class="white">鼠標放下移除該設備</p>')[0]);
+        // 標記該元素被脫離父元素
         isDragLeave = true;
       }
       if (event.dragEnter) {
         var tips = target.querySelector('p');
         tips && tips.remove();
-        // 标记该元素被脱离父元素
+        // 標記該元素被脫離父元素
         isDragLeave = false;
       }
 
@@ -218,27 +225,27 @@ interact('.draggable').draggable({
   .on('move', function (event) {
     var interaction = event.interaction;
     if (interaction.pointerIsDown && !interaction.interacting()) {
-      // 隐藏全部详情框
+      // 隱藏全部詳情框
       hiddenMainDeviceListModal();
-      // 拖动开始时,创建一个新元素
+      // 拖動開始時,創建一個新元素
       var original = event.currentTarget;
-      // 将设备列表中对应的设备设置为禁止拖动
+      // 將設備列表中對應的設備設置為禁止拖動
       original.classList.remove('draggable');
       var id = original.getAttribute('data-id');
       var obj = devices[id];
       if (!obj.groupId) {
-        // 如果对象中没有位置,说明该对象没有被拖动到摆放区
-        // 该元素样式可以自定义
-        var drag = $('<div class="flag group" data-group-id="' + id + '" style="border: 1px solid #ccc;">1<p class="white">请拖放置红框中</p></div>')[0];
+        // 如果對象中沒有位置,說明該對象沒有被拖動到擺放區
+        // 該元素樣式可以自定義
+        var drag = $('<div class="flag group" data-group-id="' + id + '" style="border: 1px solid #ccc;">1<p class="white">請拖放置紅框中</p></div>')[0];
         obj.groupId = id;
 
         mainDom.append(drag);
         interaction.start({ name: 'drag' },
           event.interactable,
           drag);
-        // 标记当前拖动对象在摆放区外
+        // 標記當前拖動對象在擺放區外
         isDragLeave = true;
-        // 将新创建的元素移动到鼠标位置
+        // 將新創建的元素移動到鼠標位置
         var offsetX = mainDom.offset().left - $(window).scrollLeft();
         var offsetY = mainDom.offset().top - $(window).scrollTop();
         var x = parseFloat(event.clientX - offsetX);
