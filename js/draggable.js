@@ -31,7 +31,7 @@ function hiddenMainDeviceListModal() {
           total += 1;
         }
       }
-      if(total>0){
+      if (total > 0) {
         item.classList.add('group');
         item.classList.remove('main-device-list-modal');
         item.innerHTML = total;
@@ -135,7 +135,7 @@ interact('.group')
 function moveEnd(event) {
   console.log('拖動結束', event);
   var target = event.target;
-
+  console.log(isDragLeave);
   if (isDragLeave) {
     // 重置標記
     isDragLeave = false;
@@ -213,20 +213,26 @@ var interactGroup = interact('.group').draggable({
     target.classList.add('main-device-list-modal');
     var groupId = target.getAttribute('data-group-id');
     var html = '';
-    var total = 0;
+    var total = [];
     for (var item in devices) {
       var obj = devices[item];
       if (obj.groupId == groupId) {
-        total += 1;
-        html += '<div class="device-wrapper main-draggable draggable" data-id="' + obj.id + '">' +
-          '<div class="device-name"><span class="gray">設備名稱:</span><span>' + obj.name + '</span></div>' +
-          '<div class="device-type"><span class="gray">設備類型:</span><span>' + deviceTypeMap[obj.type] +
-          '</span></div>' +
-          '<div><button type="button" class="remove">移除設備</button></div>' +
-          '</div>';
+        total.push(obj.id);
       }
     }
-    html = '<div><button type="button" class="hidden-device-list">隱藏</button></div><div class="title"><span>當前位置共<span class="total">' + total + '</span>台設備</span></div>' + html;
+    // 这里可以对设备详情列表的记录进行排序
+    total.sort(function (a, b) {return b - a;});
+    for (var index in total) {
+      var obj = devices[total[index]];
+      html += '<div class="device-wrapper main-draggable draggable" data-id="' + obj.id + '">' +
+        '<div class="device-name"><span class="gray">設備名稱:</span><span>' + obj.name + '</span></div>' +
+        '<div class="device-type"><span class="gray">設備類型:</span><span>' + deviceTypeMap[obj.type] +
+        '</span></div>' +
+        '<div><button type="button" class="remove">移除設備</button></div>' +
+        '</div>';
+    }
+
+    html = '<div><button type="button" class="hidden-device-list">隱藏</button></div><div class="title"><span>當前位置共<span class="total">' + total.length + '</span>台設備</span></div>' + html;
     $(target).html(html);
   });
 
@@ -261,10 +267,7 @@ interact('.draggable').draggable({
     },
   })
   .on('move', function (event) {
-    console.log(event);
     var interaction = event.interaction;
-    console.log(interaction.pointerIsDown);
-    console.log(interaction.interacting());
     if (interaction.pointerIsDown && !interaction.interacting()) {
       // 最开始拖动的元素
       var original = event.currentTarget;
