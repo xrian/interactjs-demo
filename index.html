@@ -105,14 +105,13 @@
       width: 200px;
     }
 
-    .body .operator-wrapper .device-list-wrapper .device-wrapper {
-      width: 100%;
+    .body .device-wrapper {
       background-color: #cccccc;
       margin-top: 5px;
       padding: 5px;
     }
 
-    .body .operator-wrapper .device-list-wrapper .device-wrapper.draggable {
+    .body .device-wrapper.draggable {
       background-color: #12cc4b;
       cursor: move;
     }
@@ -158,14 +157,21 @@
       background-color: red
     }
 
+    .body .main-wrapper .main .group.can-drop {
+      color: #000;
+      background-color: #4e4;
+    }
+
+    .body .main-wrapper .main .group.drop-target{
+      background-color: #29e;
+      border-color: #fff;
+      border-style: solid;
+    }
+
     .body .main .main-device-list-modal {
       background-color: #fff;
       width: 200px;
       padding: 10px;
-    }
-
-    .body .main .main-device-list-modal .device-wrapper {
-      background-color: #cccccc;
     }
 
   </style>
@@ -277,7 +283,8 @@
   ];
 
   // 使用自增 ID 作为每个新增设备的唯一标识
-  var deviceSerialNumber = 0;
+  var deviceSerialNumber = 1;
+  var groupSerialNumber = 1;
   // 新增设备时的下拉框选项
   var deviceTypeMap = {
     monitor: '显示器',

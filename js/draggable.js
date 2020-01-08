@@ -31,9 +31,14 @@ function hiddenMainDeviceListModal() {
           total += 1;
         }
       }
-      item.classList.add('group');
-      item.classList.remove('main-device-list-modal');
-      item.innerHTML = total;
+      if(total>0){
+        item.classList.add('group');
+        item.classList.remove('main-device-list-modal');
+        item.innerHTML = total;
+      } else {
+        // 如果总数为0,删除当前元素
+        item.remove();
+      }
     });
   }
 
@@ -72,6 +77,7 @@ $(function () {
 // 設置可以放置區域
 interact('#main')
   .dropzone({
+    overlap: 1,
     dragleave: function (event) {
       console.log('dropzone dragleave', event);
     },
@@ -83,9 +89,53 @@ interact('#main')
     console.log('dropzone dragenter', event);
   });
 
+// 设置 group 重叠事件
+interact('.group')
+  .dropzone({
+    accept: '.group',
+    overlap: 0.25,
+    ondragenter: function (event) {
+      // div 进入
+      event.relatedTarget.classList.add('can-drop');
+      event.target.classList.add('drop-target');
+    },
+    ondragleave: function (event) {
+      // div 离开
+      event.target.classList.remove('drop-target');
+      event.relatedTarget.classList.remove('can-drop');
+    },
+    ondrop: function (event) {
+      console.log('ondrop', event);
+      // 拖动的对象
+      event.relatedTarget.textContent = 'Dropped';
+      // 将数据合并
+      var from = event.relatedTarget;
+      var to = event.target;
+      var fromGroupId = from.getAttribute('data-group-id');
+      var toGroupId = to.getAttribute('data-group-id');
+      var toIds = [];
+      for (var key in devices) {
+        var device = devices[key];
+        if (device.groupId == fromGroupId) {
+          device.groupId = toGroupId;
+          toIds.push(key);
+        } else if (device.groupId == toGroupId) {
+          toIds.push(key);
+        }
+      }
+      to.textContent = toIds.length;
+      from.remove();
+    },
+    ondropdeactivate: function (event) {
+      // remove active dropzone feedback
+      event.target.classList.remove('drop-target');
+    },
+  });
+
 function moveEnd(event) {
   console.log('拖動結束', event);
   var target = event.target;
+
   if (isDragLeave) {
     // 重置標記
     isDragLeave = false;
@@ -93,7 +143,6 @@ function moveEnd(event) {
     var flag = window.confirm('你確定從擺放區移除該設備嗎?');
     if (flag) {
       var id = target.getAttribute('data-group-id');
-
       for (var item in devices) {
         var device = devices[item];
         if (device.groupId == id) {
@@ -123,12 +172,7 @@ var interactGroup = interact('.group').draggable({
     inertia: false,
     // 當拖動到瀏覽器窗口邊緣時,滾動窗口
     autoScroll: true,
-    // keep the element within the area of it's parent
-    modifiers: [
-//    interact.modifiers.restrictRect({
-//      restriction: 'parent',
-//    }),
-    ],
+    modifiers: [],
 
     // call this function on every dragmove event
     onmove: function (event) {
@@ -174,9 +218,9 @@ var interactGroup = interact('.group').draggable({
       var obj = devices[item];
       if (obj.groupId == groupId) {
         total += 1;
-        html += '<div class="device-wrapper main-draggable" data-id="' + obj.id + '">' +
-          '<div class="device-name"><span>設備名稱:</span><span class="green">' + obj.name + '</span></div>' +
-          '<div class="device-type"><span>設備類型:</span><span class="green">' + deviceTypeMap[obj.type] +
+        html += '<div class="device-wrapper main-draggable draggable" data-id="' + obj.id + '">' +
+          '<div class="device-name"><span class="gray">設備名稱:</span><span>' + obj.name + '</span></div>' +
+          '<div class="device-type"><span class="gray">設備類型:</span><span>' + deviceTypeMap[obj.type] +
           '</span></div>' +
           '<div><button type="button" class="remove">移除設備</button></div>' +
           '</div>';
@@ -193,13 +237,7 @@ interact('.draggable').draggable({
     autoScroll: true,
     // 忽略 button 上面的拖動事件
     ignoreFrom: 'button',
-    modifiers: [
-//      interact.modifiers.restrictRect({
-//        restriction: 'parent',
-//        endOnly: true,
-//      }),
-    ],
-    // 啓用手動控制
+    // 啓用手動实现开始结束函数
     manualStart: true,
     onmove: function (event) {
       var target = event.target;
@@ -223,21 +261,29 @@ interact('.draggable').draggable({
     },
   })
   .on('move', function (event) {
+    console.log(event);
     var interaction = event.interaction;
+    console.log(interaction.pointerIsDown);
+    console.log(interaction.interacting());
     if (interaction.pointerIsDown && !interaction.interacting()) {
-      // 隱藏全部詳情框
-      hiddenMainDeviceListModal();
-      // 拖動開始時,創建一個新元素
+      // 最开始拖动的元素
       var original = event.currentTarget;
-      // 將設備列表中對應的設備設置為禁止拖動
+      // 將当前开始拖拽的div设置为不可拖拽
       original.classList.remove('draggable');
       var id = original.getAttribute('data-id');
       var obj = devices[id];
+      if (original.classList.contains('main-draggable')) {
+        // 如果为true,说明是从摆放区的设备列表开始拖拽.清空groupId,生成div了再赋值groupId
+        obj.groupId = null;
+      }
+      // 隱藏全部詳情框
+      hiddenMainDeviceListModal();
       if (!obj.groupId) {
         // 如果對象中沒有位置,說明該對象沒有被拖動到擺放區
         // 該元素樣式可以自定義
-        var drag = $('<div class="flag group" data-group-id="' + id + '" style="border: 1px solid #ccc;">1<p class="white">請拖放置紅框中</p></div>')[0];
-        obj.groupId = id;
+        var groupId = groupSerialNumber++;
+        var drag = $('<div class="flag group" data-group-id="' + groupId + '" style="border: 1px solid #ccc;">1<p class="white">請拖放置紅框中</p></div>')[0];
+        obj.groupId = groupId;
 
         mainDom.append(drag);
         interaction.start({ name: 'drag' },
