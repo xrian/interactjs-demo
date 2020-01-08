@@ -19,6 +19,10 @@
       color: #0b8235;
     }
 
+    .white{
+      color: #fff;
+    }
+
     .setting-wrapper {
       width: 100%;
       margin: 0 auto;
@@ -88,20 +92,18 @@
     .body .operator-wrapper .container {
       min-height: 300px;
       max-height: 500px;
-      /*overflow-y: auto;*/
-      /*overflow-x: hidden;*/
+      overflow-y: auto;
     }
 
     .body .operator-wrapper .container .device-list-wrapper{
-
       display: flex;
       flex-wrap: wrap;
       width: 200px;
     }
 
     .body .operator-wrapper .device-list-wrapper .device-wrapper {
+      cursor: move;
       width: 100%;
-      /*z-index: 1;*/
       background-color: #cccccc;
       margin-top: 5px;
       padding: 5px;
@@ -114,12 +116,8 @@
       position: relative;
     }
 
-    .body .main-wrapper .main {
-      background-color: rgba(255, 255, 255, 0.5);
-    }
-
     .body .main-wrapper .background-image-div {
-      background-image: url("../images/6aedf07074a3183023e855c5729757eb--open-kitchen-restaurant-restaurant-layout.jpg");
+      background-image: url("./images/6aedf07074a3183023e855c5729757eb--open-kitchen-restaurant-restaurant-layout.jpg");
       background-repeat: no-repeat;
       background-size: 100% 100%;
       z-index: -1;
@@ -128,11 +126,21 @@
       left: 0;
     }
 
+    .body .main-wrapper .main {
+      background-color: rgba(255, 255, 255, 0.5);
+      border: 1px red solid;
+      position: relative;
+    }
+
     /* 摆放区的统计 */
-    .body .main .flag{
+    .body .main-wrapper .main .group{
+      position: absolute;
+      top: 0;
+      left: 0;
       display: inline-block;
       padding: 2px;
       font-size: 12px;
+      background-color: red
     }
 
   </style>
@@ -191,9 +199,9 @@
   </div>
 </div>
 
-<script type="text/javascript" src="../js/jquery-1.12.4.min.js"></script>
-<script src="../js/interact.min.js"></script>
-<script src="../js/draggable.js"></script>
+<script type="text/javascript" src="./js/jquery-1.12.4.min.js"></script>
+<script src="./js/interact.min.js"></script>
+<script src="./js/draggable.js"></script>
 <script>
   // 初始化设备列表.如果需要页面加载后显示,则设置该对象的值
   var initDeviceData = [
@@ -203,16 +211,44 @@
       name: '张淞\'s 小米米家智能摄像头',
       type: 'camera',
     },
+    {
+      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      id: -2,
+      name: '22张淞\'s 小米米家智能摄像头',
+      type: 'camera',
+    },
+    {
+      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      id: -3,
+      name: '33张淞\'s 小米米家智能摄像头',
+      type: 'camera',
+    },
+    {
+      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      id: -4,
+      name: '444\'s 小米米家智能摄像头',
+      type: 'camera',
+    },
+    {
+      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      id: -5,
+      name: '555\'s 小米米家智能摄像头',
+      type: 'camera',
+    },
   ];
 
+  // 使用自增 ID 作为每个新增设备的唯一标识
+  var deviceSerialNumber = 0;
   // 新增设备时的下拉框选项
   var deviceTypeMap = {
     monitor: '显示器',
     camera: '摄像头',
     sound: '音响',
   };
-  // 使用自增 ID 作为每个新增设备的唯一标识
-  var deviceSerialNumber = 0;
+  // 当创建一个对象时,最外层 div 的 ID 生成规则
+  var deviceWrapperIdTemplate = 'device-@ID';
+
+  // dom 对象
   var backgroundImageDivDom = $('.background-image-div');
   var addDeviceModalDom = $('#addDeviceModal');
   var deviceListWrapperDom = $('#deviceListWrapper');
@@ -254,14 +290,14 @@
       var item = devices[key];
       if (!item.dom) {
         // 如果对象中不存在 dom 对象,则创建 dom 对象并显示在页面中
-        var dom = $('<div class="device-wrapper draggable" id="device-' + key + '" data-id="' + key + '">' +
+        var dom = $('<div class="device-wrapper draggable" id="' + deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' + key + '">' +
           '<div class="device-name"><span>设备名称:</span><span class="green">' + item.name + '</span></div>' +
           '<div class="device-type"><span>设备类型:</span><span class="green">' + deviceTypeMap[item.type] +
           '</span></div>' +
           '<div><button type="button" class="show-location">查看位置</button><button type="button" class="delete">删除</button></div>' +
           '</div>');
         deviceListWrapperDom.append(dom);
-        item.dom = dom;
+        item.dom = dom[0];
       }
     }
   }
@@ -338,7 +374,9 @@
       var obj = devices[id];
       if (obj) {
         // 根据ID查询,如果存在对应的选项,则从device中删除,并释放拖拽对象
-
+        if(obj.drag){
+          obj.drag.remove();
+        }
       }
       wrapperDom.remove();
     });
