@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Title</title>
   <style>
-    * {
+    .draggable, .main, .group {
       /* 禁止触摸屏事件 */
       touch-action: none;
       user-select: none;
@@ -19,8 +19,12 @@
       color: #0b8235;
     }
 
-    .white{
+    .white {
       color: #fff;
+    }
+
+    .gray {
+      color: #635f63;
     }
 
     .setting-wrapper {
@@ -95,7 +99,7 @@
       overflow-y: auto;
     }
 
-    .body .operator-wrapper .container .device-list-wrapper{
+    .body .operator-wrapper .container .device-list-wrapper {
       display: flex;
       flex-wrap: wrap;
       width: 200px;
@@ -109,6 +113,17 @@
       padding: 5px;
     }
 
+    .body .operator-wrapper .device-list-wrapper .device-wrapper.draggable {
+      background-color: #12cc4b;
+    }
+
+    /*.body .operator-wrapper .device-list-wrapper .draggable .show-location{*/
+    /*  display: none;*/
+    /*}*/
+    /* // TODO: 显示位置按钮先隐藏,功能未完成 */
+    .body .operator-wrapper .device-list-wrapper .show-location {
+      display: none;
+    }
 
     .body .main-wrapper {
       border: 1px solid #ccc;
@@ -132,8 +147,8 @@
       position: relative;
     }
 
-    /* 摆放区的统计 */
-    .body .main-wrapper .main .group{
+    /* 摆放区的统计显示 */
+    .body .main-wrapper .main .group {
       position: absolute;
       top: 0;
       left: 0;
@@ -141,6 +156,16 @@
       padding: 2px;
       font-size: 12px;
       background-color: red
+    }
+
+    .body .main .main-device-list-modal {
+      background-color: #fff;
+      width: 200px;
+      padding: 10px;
+    }
+
+    .body .main .main-device-list-modal .device-wrapper {
+      background-color: #cccccc;
     }
 
   </style>
@@ -160,6 +185,20 @@
     <div class="text-center">
       <button type="button" id="AddDeviceBtn">新增</button>
     </div>
+  </div>
+</div>
+<div class="tips">
+  <div>使用说明:
+    <p>1. 输出长宽后,点击改变面积按钮,可以改变红框的大小</p>
+    <p>2. 可以上传背景图片</p>
+    <p>3. 可以设置背景图片的透明度</p>
+    <p>4. 点击设备列表中的新增按钮,可以新增设备.</p>
+    <p>5. 可以从设备列表拖动到红框中</p>
+    <p>6. 红框中的数字,代表在对应位置有多少台设备</p>
+    <p>7. 双击红框中的设备数字,可以展开对应位置的设备列表</p>
+    <p>7.1 点击隐藏,会将设备列表详情全部隐藏.</p>
+    <p>7.2 点击位置设备列表详情中的删除按钮,会将对应设备移除.(移除后可以重新从左边的列表拖进红框)</p>
+    <p>8. 坐标的设备列表,点击删除后,会将对应设备删除,并且已摆放的位置也会清空</p>
   </div>
 </div>
 <div id="settingWrapper" class="setting-wrapper">
@@ -290,9 +329,11 @@
       var item = devices[key];
       if (!item.dom) {
         // 如果对象中不存在 dom 对象,则创建 dom 对象并显示在页面中
-        var dom = $('<div class="device-wrapper draggable" id="' + deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' + key + '">' +
-          '<div class="device-name"><span>设备名称:</span><span class="green">' + item.name + '</span></div>' +
-          '<div class="device-type"><span>设备类型:</span><span class="green">' + deviceTypeMap[item.type] +
+        var dom = $(
+          '<div class="device-wrapper draggable" id="' + deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' +
+          key + '">' +
+          '<div class="device-name"><span class="gray">设备名称:</span><span>' + item.name + '</span></div>' +
+          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] +
           '</span></div>' +
           '<div><button type="button" class="show-location">查看位置</button><button type="button" class="delete">删除</button></div>' +
           '</div>');
@@ -374,8 +415,23 @@
       var obj = devices[id];
       if (obj) {
         // 根据ID查询,如果存在对应的选项,则从device中删除,并释放拖拽对象
-        if(obj.drag){
-          obj.drag.remove();
+        var groupId = obj.groupId;
+        if (groupId) {
+          obj.groupId = null;
+          var total = 0;
+          for (var key in devices) {
+            var device = devices[key];
+            if (device.groupId == groupId) {
+              total += 1;
+            }
+          }
+          hiddenMainDeviceListModal();
+          var dom = mainDom.find('div[data-group-id="' + groupId + '"]');
+          if (total > 0) {
+            dom.html(total);
+          } else {
+            dom[0].remove();
+          }
         }
       }
       wrapperDom.remove();
