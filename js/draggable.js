@@ -148,6 +148,10 @@ var interactGroup = interact('.group').draggable({
     },
     // call this function on every dragend event
   })
+  .on('dragstart', function (event) {
+    hiddenMainDeviceListModal();
+    console.log('开始拖动数字', event);
+  })
   .on('dragend', moveEnd)
   // 双击展开设备列表详情
   .on('doubletap', function (event) {
@@ -214,6 +218,8 @@ interact('.draggable').draggable({
   .on('move', function (event) {
     var interaction = event.interaction;
     if (interaction.pointerIsDown && !interaction.interacting()) {
+      // 隐藏全部详情框
+      hiddenMainDeviceListModal();
       // 拖动开始时,创建一个新元素
       var original = event.currentTarget;
       // 将设备列表中对应的设备设置为禁止拖动
