@@ -121,8 +121,9 @@
       cursor: move;
     }
 
-    .body .operator-wrapper .device-list-wrapper .show-location {
-
+    /* 如果可以拖动,隐藏 div 中的显示按钮位置 */
+    .body .operator-wrapper .device-list-wrapper .draggable .show-location {
+      display: none;
     }
 
     .body .main-wrapper {
@@ -165,6 +166,10 @@
       background-size: 100% 100%;
     }
 
+    .body .main-wrapper .main .group.highlight{
+      background-color: yellow;
+    }
+
     .body .main-wrapper .main .group p {
       background-color: red;
       color: white;
@@ -186,6 +191,7 @@
 
     .body .main .main-device-list-modal {
       background-color: #fff;
+      border: 1px solid #cccccc;
       width: 200px;
       padding: 10px;
     }
@@ -213,6 +219,10 @@
     <div>
       选择设备类型:
       <select id="deviceTypeSelect"></select>
+    </div>
+    <div>
+      选择设备位置:
+      <select id="devicePositionSelect"></select>
     </div>
     <div class="text-center">
       <button type="button" id="AddDeviceBtn">新增</button>
@@ -280,30 +290,35 @@
       id: -1,
       name: '张淞\'s 小米米家智能摄像头',
       type: 'camera',
+      devicePosition: 'ceiling',
     },
     {
       // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
       id: -2,
       name: '22张淞\'s 小米米家智能摄像头',
       type: 'camera',
+      devicePosition: 'ceiling',
     },
     {
       // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
       id: -3,
       name: '33张淞\'s 小米米家智能摄像头',
       type: 'camera',
+      devicePosition: 'ceiling',
     },
     {
       // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
       id: -4,
       name: '444\'s 小米米家智能摄像头',
       type: 'camera',
+      devicePosition: 'ceiling',
     },
     {
       // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
       id: -5,
       name: '555\'s 小米米家智能摄像头',
       type: 'camera',
+      devicePosition: 'ceiling',
     },
   ];
 
@@ -315,6 +330,12 @@
     monitor: '显示器',
     camera: '摄像头',
     sound: '音响',
+  };
+  // 设备位置
+  var devicePositionMap = {
+    floor: '地上',
+    wall: '墙上',
+    ceiling: '天花板上',
   };
   // 当创建一个对象时,最外层 div 的 ID 生成规则
   var deviceWrapperIdTemplate = 'device-@ID';
@@ -352,6 +373,7 @@
   function closeAddDeviceModal() {
     $('#deviceName').val('');
     $('#deviceTypeSelect').val('');
+    $('#devicePositionSelect').val('');
     addDeviceModalDom.hide();
   }
 
@@ -365,9 +387,10 @@
           '<div class="device-wrapper draggable" id="' + deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' +
           key + '">' +
           '<div class="device-name"><span class="gray">设备名称:</span><span>' + item.name + '</span></div>' +
-          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] +
+          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] + '</span></div>' +
+          '<div class="device-position"><span class="gray">设备位置:</span><span class="">' + devicePositionMap[item.devicePosition] +
           '</span></div>' +
-          '<div><button type="button" class="show-location">查看位置</button><button type="button" class="show-qr-code">查看二维码</button><button type="button" class="delete">删除</button></div>' +
+          '<div><button type="button" class="show-location">查看坐标</button><button type="button" class="show-qr-code">查看二维码</button><button type="button" class="delete">删除</button></div>' +
           '</div>');
         deviceListWrapperDom.append(dom);
         item.dom = dom[0];
@@ -384,6 +407,12 @@
       deviceTypeHtml += '<option value="' + item + '">' + deviceTypeMap[item] + '</option>';
     }
     $('#deviceTypeSelect').html(deviceTypeHtml);
+    // 初始化设备位置
+    var devicePositionHtml = '';
+    for (var item in devicePositionMap) {
+      devicePositionHtml += '<option value="' + item + '">' + devicePositionMap[item] + '</option>';
+    }
+    $('#devicePositionSelect').html(devicePositionHtml);
 
     // 初始化设备数据
     syncDevices();
@@ -450,6 +479,7 @@
     $('#AddDeviceBtn').on('click', function () {
       var deviceName = $('#deviceName').val();
       var deviceType = $('#deviceTypeSelect').val();
+      var devicePosition = $('#devicePositionSelect').val();
       if (!deviceName) {
         alert('请填写设备名称');
         return;
@@ -458,15 +488,49 @@
         alert('请选择设备类型');
         return;
       }
+      if (!devicePosition) {
+        alert('请选择设备位置');
+        return;
+      }
       var device = {
         id: deviceSerialNumber++,
         name: deviceName,
         type: deviceType,
+        devicePosition: devicePosition,
       };
       devices[device.id] = device;
       syncDevices();
       closeAddDeviceModal();
     });
+    // 鼠标移入显示设备按钮
+    deviceListWrapperDom.on('mouseenter', '.show-location',function (event) {
+      event.preventDefault();
+      hiddenMainDeviceListModal();
+      var parentNode = this.parentNode.parentNode;
+      var id = parentNode.getAttribute('data-id');
+      debugger;
+      var device = devices[id];
+      var groupId = device.groupId;
+      var groupDom =  document.querySelector('#main div[data-group-id="'+groupId+'"]');
+      if(groupDom){
+        groupDom.classList.add('highlight');
+        groupDom.appendChild($('<p>在这</p>')[0]);
+      }
+    });
+    // 鼠标移出显示设备按钮
+    deviceListWrapperDom.on('mouseleave', '.show-location',function (event) {
+      event.preventDefault();
+      var parentNode = this.parentNode.parentNode;
+      var id = parentNode.getAttribute('data-id');
+      var device = devices[id];
+      var groupId = device.groupId;
+      var groupDom =  document.querySelector('#main div[data-group-id="'+groupId+'"]');
+      if(groupDom){
+        groupDom.classList.remove('highlight');
+        groupDom.querySelector('p').remove();
+      }
+    });
+
     // 删除设备按钮
     deviceListWrapperDom.on('click', '.delete', function (e) {
       e.preventDefault();

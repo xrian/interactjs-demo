@@ -227,6 +227,7 @@ var interactGroup = interact('.group').draggable({
       html += '<div class="device-wrapper main-draggable draggable" data-id="' + obj.id + '">' +
         '<div class="device-name"><span class="gray">設備名稱:</span><span>' + obj.name + '</span></div>' +
         '<div class="device-type"><span class="gray">設備類型:</span><span>' + deviceTypeMap[obj.type] +
+        '<div class="device-position"><span class="gray">設備位置:</span><span>' + devicePositionMap[obj.devicePosition] +
         '</span></div>' +
         '<div><button type="button" class="remove">移除設備</button></div>' +
         '</div>';
