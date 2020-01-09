@@ -79,14 +79,14 @@ interact('#main')
   .dropzone({
     overlap: 1,
     dragleave: function (event) {
-      console.log('dropzone dragleave', event);
+//      console.log('dropzone dragleave', event);
     },
   })
   .on('dragleave', function (event) {
-    console.log('dropzone dragleave', event);
+//    console.log('dropzone dragleave', event);
   })
   .on('dragenter', function (event) {
-    console.log('dropzone dragenter', event);
+//    console.log('dropzone dragenter', event);
   });
 
 // 设置 group 重叠事件
@@ -105,7 +105,6 @@ interact('.group')
       event.relatedTarget.classList.remove('can-drop');
     },
     ondrop: function (event) {
-      console.log('ondrop', event);
       // 拖动的对象
       event.relatedTarget.textContent = 'Dropped';
       // 将数据合并
@@ -133,9 +132,7 @@ interact('.group')
   });
 
 function moveEnd(event) {
-  console.log('拖動結束', event);
   var target = event.target;
-  console.log(isDragLeave);
   if (isDragLeave) {
     // 重置標記
     isDragLeave = false;
@@ -201,7 +198,6 @@ var interactGroup = interact('.group').draggable({
     var target = event.target;
     startX = target.getAttribute('data-x');
     startY = target.getAttribute('data-y');
-    console.log('開始拖動數字', event);
   })
   .on('dragend', moveEnd)
   // 雙擊展開設備列表詳情
