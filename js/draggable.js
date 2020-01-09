@@ -36,7 +36,7 @@ function hiddenMainDeviceListModal() {
         item.classList.remove('main-device-list-modal');
         item.innerHTML = total;
       } else {
-        // 如果总数为0,删除当前元素
+        // 如果總數為0,刪除當前元素
         item.remove();
       }
     });
@@ -89,25 +89,25 @@ interact('#main')
 //    console.log('dropzone dragenter', event);
   });
 
-// 设置 group 重叠事件
+// 設置 group 重疊事件
 interact('.group')
   .dropzone({
     accept: '.group',
     overlap: 0.25,
     ondragenter: function (event) {
-      // div 进入
+      // div 進入
       event.relatedTarget.classList.add('can-drop');
       event.target.classList.add('drop-target');
     },
     ondragleave: function (event) {
-      // div 离开
+      // div 離開
       event.target.classList.remove('drop-target');
       event.relatedTarget.classList.remove('can-drop');
     },
     ondrop: function (event) {
-      // 拖动的对象
+      // 拖動的對象
       event.relatedTarget.textContent = 'Dropped';
-      // 将数据合并
+      // 將數據合併
       var from = event.relatedTarget;
       var to = event.target;
       var fromGroupId = from.getAttribute('data-group-id');
@@ -216,7 +216,7 @@ var interactGroup = interact('.group').draggable({
         total.push(obj.id);
       }
     }
-    // 这里可以对设备详情列表的记录进行排序
+    // 這裡可以對設備詳情列表的記錄進行排序
     total.sort(function (a, b) {return b - a;});
     for (var index in total) {
       var obj = devices[total[index]];
@@ -240,7 +240,7 @@ interact('.draggable').draggable({
     autoScroll: true,
     // 忽略 button 上面的拖動事件
     ignoreFrom: 'button',
-    // 啓用手動实现开始结束函数
+    // 啓用手動實現開始結束函數
     manualStart: true,
     onmove: function (event) {
       var target = event.target;
@@ -266,14 +266,14 @@ interact('.draggable').draggable({
   .on('move', function (event) {
     var interaction = event.interaction;
     if (interaction.pointerIsDown && !interaction.interacting()) {
-      // 最开始拖动的元素
+      // 最開始拖動的元素
       var original = event.currentTarget;
-      // 將当前开始拖拽的div设置为不可拖拽
+      // 將當前開始拖拽的div設置為不可拖拽
       original.classList.remove('draggable');
       var id = original.getAttribute('data-id');
       var obj = devices[id];
       if (original.classList.contains('main-draggable')) {
-        // 如果为true,说明是从摆放区的设备列表开始拖拽.清空groupId,生成div了再赋值groupId
+        // 如果為true,說明是從擺放區的設備列表開始拖拽.清空groupId,生成div了再賦值groupId
         obj.groupId = null;
       }
       // 隱藏全部詳情框

@@ -6,7 +6,7 @@
   <title>Title</title>
   <style>
     .draggable, .main, .group {
-      /* 禁止触摸屏事件 */
+      /* 禁止觸摸屏事件 */
       touch-action: none;
       user-select: none;
     }
@@ -125,7 +125,7 @@
       cursor: move;
     }
 
-    /* 如果可以拖动,隐藏 div 中的显示按钮位置 */
+    /* 如果可以拖動,隱藏 div 中的顯示按鈕位置 */
     .body .operator-wrapper .device-list-wrapper .draggable .show-location {
       display: none;
     }
@@ -152,7 +152,7 @@
       position: relative;
     }
 
-    /* 摆放区的统计显示 */
+    /* 擺放區的統計顯示 */
     .body .main-wrapper .main .group {
       position: absolute;
       top: 0;
@@ -206,9 +206,9 @@
 <div id="QRModal" class="modal">
   <div class="container">
     <div>
-      <button type="button" class="narrow">缩小</button>
+      <button type="button" class="narrow">縮小</button>
       <button type="button" class="enlarge">放大</button>
-      <button type="button" class="close">关闭</button>
+      <button type="button" class="close">關閉</button>
     </div>
     <img id="qrcode" width="256" src="./images/erCode.png">
   </div>
@@ -218,14 +218,14 @@
     <div class="close">
       <button type="button" id="closeAddDeviceBtn">X</button>
     </div>
-    <div class="text-center">新增设备</div>
-    <div>设备名称:<input type="text" id="deviceName" maxlength="50"></div>
+    <div class="text-center">新增設備</div>
+    <div>設備名稱:<input type="text" id="deviceName" maxlength="50"></div>
     <div>
-      选择设备类型:
+      選擇設備類型:
       <select id="deviceTypeSelect"></select>
     </div>
     <div>
-      选择设备位置:
+      選擇設備位置:
       <select id="devicePositionSelect"></select>
     </div>
     <div class="text-center">
@@ -235,20 +235,20 @@
 </div>
 <div id="settingWrapper" class="setting-wrapper">
   <div>
-    <div class="title">设置面积</div>
-    <div>长:<input type="number" name="roomLength" id="roomLength" value="500"></div>
-    <div>宽:<input type="number" name="roomWidth" id="roomWidth" value="800"></div>
-    <button type="button" id="changeArea">改变面积大小</button>
+    <div class="title">設置面積</div>
+    <div>長:<input type="number" name="roomLength" id="roomLength" value="500"></div>
+    <div>寬:<input type="number" name="roomWidth" id="roomWidth" value="800"></div>
+    <button type="button" id="changeArea">改變面積大小</button>
   </div>
   <div>
-    设置背景图片
+    設置背景圖片
     <input type="file" name="backgroundImage" id="backgroundImage" accept="image/*" />
   </div>
-  <div>调整背景图片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.8"></div>
+  <div>調整背景圖片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.8"></div>
   <div id="areaScale" class="area-scale" data-scale="1">
-    <span>画布设置:</span>
-    <button type="button" class="reset">恢复画布默认比例</button>
-    <button type="button" class="narrow">缩小</button>
+    <span>畫布設置:</span>
+    <button type="button" class="reset">恢復畫布默認比例</button>
+    <button type="button" class="narrow">縮小</button>
     <button type="button" class="enlarge">放大</button>
     <span class="text">1:<span class="num">1</span></span>
   </div>
@@ -261,7 +261,7 @@
   <div class="operator-wrapper">
     <div class="title">
       <div class="text-center">
-        设备列表
+        設備列表
       </div>
       <div class="operator-add">
         <button id="showAddDeviceBtn" type="button">新增</button>
@@ -280,59 +280,59 @@
   </div>
 </div>
 <div class="tips">
-  <div>使用说明:
-    <p>1. 输出长宽后,点击改变面积按钮,可以改变红框的大小</p>
-    <p>2. 可以上传背景图片</p>
-    <p>3. 可以设置背景图片的透明度</p>
-    <p>4. 点击设备列表中的新增按钮,可以新增设备.</p>
-    <p>5. 可以从设备列表拖动到红框中</p>
-    <p>6. 红框中的数字,代表在对应位置有多少台设备</p>
-    <p>7. 双击红框中的设备数字,可以展开对应位置的设备列表</p>
-    <p>7.1 点击隐藏,会将设备列表详情全部隐藏.</p>
-    <p>7.2 点击位置设备列表详情中的删除按钮,会将对应设备移除.(移除后可以重新从左边的列表拖进红框)</p>
-    <p>8. 坐标的设备列表,点击删除后,会将对应设备删除,并且已摆放的位置也会清空</p>
+  <div>使用說明:
+    <p>1. 輸出長寬後,點擊改變面積按鈕,可以改變紅框的大小</p>
+    <p>2. 可以上傳背景圖片</p>
+    <p>3. 可以設置背景圖片的透明度</p>
+    <p>4. 點擊設備列表中的新增按鈕,可以新增設備.</p>
+    <p>5. 可以從設備列表拖動到紅框中</p>
+    <p>6. 紅框中的數字,代表在對應位置有多少台設備</p>
+    <p>7. 雙擊紅框中的設備數字,可以展開對應位置的設備列表</p>
+    <p>7.1 點擊隱藏,會將設備列表詳情全部隱藏.</p>
+    <p>7.2 點擊位置設備列表詳情中的刪除按鈕,會將對應設備移除.(移除後可以重新從左邊的列表拖進紅框)</p>
+    <p>8. 坐標的設備列表,點擊刪除後,會將對應設備刪除,並且已擺放的位置也會清空</p>
   </div>
 </div>
 <script type="text/javascript" src="./js/jquery-1.12.4.min.js"></script>
 <script src="./js/interact.min.js"></script>
-<script src="./js/draggable.js?v=0.0.4"></script>
+<script src="./js/draggable.js?v=0.0.5"></script>
 <script>
-  // 初始化设备列表.如果需要页面加载后显示,则设置该对象的值
+  // 初始化設備列表.如果需要頁面加載後顯示,則設置該對象的值
   var initDeviceData = [
     {
-      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      // 如果是初始化數據,比如從後端請求的歷史數據,ID 建議設置為負數,以免和新增設備時自動生成的 ID 重復
       id: -1,
-      name: '张淞\'s 小米米家智能摄像头',
+      name: '張淞\'s 小米米家智能攝像頭',
       type: 'camera',
       devicePosition: 'ceiling',
       groupId: -1,
     },
     {
-      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      // 如果是初始化數據,比如從後端請求的歷史數據,ID 建議設置為負數,以免和新增設備時自動生成的 ID 重復
       id: -2,
-      name: '22张淞\'s 小米米家智能摄像头',
+      name: '22張淞\'s 小米米家智能攝像頭',
       type: 'camera',
       devicePosition: 'ceiling',
       groupId: -1,
     },
     {
-      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      // 如果是初始化數據,比如從後端請求的歷史數據,ID 建議設置為負數,以免和新增設備時自動生成的 ID 重復
       id: -3,
-      name: '33张淞\'s 小米米家智能摄像头',
+      name: '33張淞\'s 小米米家智能攝像頭',
       type: 'camera',
       devicePosition: 'ceiling',
     },
     {
-      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      // 如果是初始化數據,比如從後端請求的歷史數據,ID 建議設置為負數,以免和新增設備時自動生成的 ID 重復
       id: -4,
-      name: '444\'s 小米米家智能摄像头',
+      name: '444\'s 小米米家智能攝像頭',
       type: 'camera',
       devicePosition: 'ceiling',
     },
     {
-      // 如果是初始化数据,比如从后端请求的历史数据,ID 建议设置为负数,以免和新增设备时自动生成的 ID 重复
+      // 如果是初始化數據,比如從後端請求的歷史數據,ID 建議設置為負數,以免和新增設備時自動生成的 ID 重復
       id: -5,
-      name: '555\'s 小米米家智能摄像头',
+      name: '555\'s 小米米家智能攝像頭',
       type: 'camera',
       devicePosition: 'ceiling',
     },
@@ -346,48 +346,48 @@
     },
   ];
 
-  // 使用自增 ID 作为每个新增设备的唯一标识
+  // 使用自增 ID 作為每個新增設備的唯一標識
   var deviceSerialNumber = 1;
   var groupSerialNumber = 1;
-  // 新增设备时的下拉框选项
+  // 新增設備時的下拉框選項
   var deviceTypeMap = {
-    monitor: '显示器',
-    camera: '摄像头',
-    sound: '音响',
+    monitor: '顯示器',
+    camera: '攝像頭',
+    sound: '音響',
   };
-  // 设备位置
+  // 設備位置
   var devicePositionMap = {
     floor: '地上',
-    wall: '墙上',
+    wall: '牆上',
     ceiling: '天花板上',
   };
-  // 当创建一个对象时,最外层 div 的 ID 生成规则
+  // 當創建一個對象時,最外層 div 的 ID 生成規則
   var deviceWrapperIdTemplate = 'device-@ID';
 
-  // dom 对象
+  // dom 對象
   var backgroundImageDivDom = $('.background-image-div');
   var addDeviceModalDom = $('#addDeviceModal');
   var deviceListWrapperDom = $('#deviceListWrapper');
   var mainDom = $('#main');
   var areaScaleDom = $('#areaScale');
-  // 设备对象.
+  // 設備對象.
   var devices = {};
-  // 将初始化数据列表转换为 object,ID 为 key
+  // 將初始化數據列表轉換為 object,ID 為 key
   for (var index in initDeviceData) {
     var item = initDeviceData[index];
     devices[item.id] = item;
   }
 
-  // 改变面积
+  // 改變面積
   function changeArea() {
     var height = $('#roomLength').val();
     var width = $('#roomWidth').val();
     if (isNaN(height) || height < 300) {
-      alert('面积长必须大于300');
+      alert('面積長必須大於300');
       return;
     }
     if (isNaN(width) || width < 300) {
-      alert('面积宽必须大于300');
+      alert('面積寬必須大於300');
       return;
     }
     mainDom.width(width + 'px').height(height + 'px');
@@ -397,23 +397,23 @@
   }
 
   /**
-   * 改变画布比例
-   * @param next 改变后的画布比例
+   * 改變畫布比例
+   * @param next 改變後的畫布比例
    */
   function changeAreaScale(next) {
-    // 先隐藏全部设备详情
+    // 先隱藏全部設備詳情
     hiddenMainDeviceListModal();
-    // 获取当前比例
+    // 獲取當前比例
     var prevScale = Number(areaScaleDom.attr('data-scale'));
     var scale = Math.floor(next / prevScale * 100) / 100;
     var areaWidth = (mainDom.width() * scale).toFixed(2);
     var areaHeight = (mainDom.height() * scale).toFixed(2);
-    // 更新面积div 宽高, 只保留两位小数
+    // 更新面積div 寬高, 只保留兩位小數
     mainDom.width(areaWidth + 'px').height(areaHeight + 'px');
     backgroundImageDivDom.width(areaWidth + 'px').height(areaHeight + 'px');
-    // 更新分组坐标
+    // 更新分組坐標
     mainDom.children('.group').each(function (index, item) {
-      // 当画布比例改变时,以子div的中心更新位置
+      // 當畫布比例改變時,以子div的中心更新位置
       var domByJq = $(this);
       var originWidth = domByJq.width();
       var originHeight = domByJq.height();
@@ -427,7 +427,7 @@
     areaScaleDom.find('.num').html(next);
   }
 
-  // 清除新增设备表单并关闭模态窗
+  // 清除新增設備表單並關閉模態窗
   function closeAddDeviceModal() {
     $('#deviceName').val('');
     $('#deviceTypeSelect').val('');
@@ -435,28 +435,28 @@
     addDeviceModalDom.hide();
   }
 
-  // 同步 devices 数组中的值到页面的设备列表
+  // 同步 devices 數組中的值到頁面的設備列表
   function syncDevices() {
     for (var key in devices) {
       var item = devices[key];
       if (!item.dom) {
-        // 如果对象中不存在 dom 对象,则创建 dom 对象并显示在页面中
+        // 如果對象中不存在 dom 對象,則創建 dom 對象並顯示在頁面中
         var dom = $(
           '<div class="device-wrapper ' + (item.groupId ? '' : 'draggable') + '" id="' +
           deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' +
           key + '">' +
-          '<div class="device-name"><span class="gray">设备名称:</span><span>' + item.name + '</span></div>' +
-          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] +
+          '<div class="device-name"><span class="gray">設備名稱:</span><span>' + item.name + '</span></div>' +
+          '<div class="device-type"><span class="gray">設備類型:</span><span class="">' + deviceTypeMap[item.type] +
           '</span></div>' +
-          '<div class="device-position"><span class="gray">设备位置:</span><span class="">' +
+          '<div class="device-position"><span class="gray">設備位置:</span><span class="">' +
           devicePositionMap[item.devicePosition] +
           '</span></div>' +
-          '<div><button type="button" class="show-location">查看坐标</button><button type="button" class="show-qr-code">查看二维码</button><button type="button" class="delete">删除</button></div>' +
+          '<div><button type="button" class="show-location">查看坐標</button><button type="button" class="show-qr-code">查看二維碼</button><button type="button" class="delete">刪除</button></div>' +
           '</div>');
         deviceListWrapperDom.append(dom);
         item.dom = dom[0];
       } else {
-        // 检查是否存在 groupId,如果存在,移除 draggable class
+        // 檢查是否存在 groupId,如果存在,移除 draggable class
         if (item.groupId) {
           item.dom.classList.remove('draggable');
         } else {
@@ -479,19 +479,19 @@
   }
 
   $(function () {
-    // 序列化,获取全部信息
+    // 序列化,獲取全部信息
     $('#serialize').on('click', function () {
       hiddenMainDeviceListModal();
-      // 获取宽高
+      // 獲取寬高
       var width = mainDom.attr('data-width');
       var height = mainDom.attr('data-height');
-      // 画面比例
+      // 畫面比例
       var scale = areaScaleDom.attr('data-scale');
       // 透明度
       var opacity = $('#opacity').val();
-      // 背景图片(未处理)
+      // 背景圖片(未處理)
       var backgroundImage = $('#backgroundImage').val();
-      // 设备列表
+      // 設備列表
       var deviceList = [];
       var list = $('#deviceListWrapper .device-wrapper');
       for (var i = 0; i < list.length; i++) {
@@ -505,15 +505,15 @@
         });
       }
       var groupList = [];
-      // 获取分组信息
+      // 獲取分組信息
       list = mainDom.children('.group');
       for (var i = 0; i < list.length; i++) {
         var id = list[i].getAttribute('data-group-id');
         groupList.push({
           id: id,
-          // 注意,该值可能为小数,如果要保存数据库,需要处理位数
+          // 注意,該值可能為小數,如果要保存數據庫,需要處理位數
           x: list[i].getAttribute('data-x'),
-          // 注意,该值可能为小数,如果要保存数据库,需要处理位数
+          // 注意,該值可能為小數,如果要保存數據庫,需要處理位數
           y: list[i].getAttribute('data-y'),
           total: list[i].innerText,
         });
@@ -527,48 +527,48 @@
         deviceList: deviceList,
         groupList: groupList,
       });
-      alert('请打开控制台查看内容');
+      alert('請打開控制台查看內容');
     });
 
-    // 初始化面积 div
+    // 初始化面積 div
     changeArea();
-    // 初始化设备下拉框
+    // 初始化設備下拉框
     var deviceTypeHtml = '';
     for (var item in deviceTypeMap) {
       deviceTypeHtml += '<option value="' + item + '">' + deviceTypeMap[item] + '</option>';
     }
     $('#deviceTypeSelect').html(deviceTypeHtml);
-    // 初始化设备位置
+    // 初始化設備位置
     var devicePositionHtml = '';
     for (var item in devicePositionMap) {
       devicePositionHtml += '<option value="' + item + '">' + devicePositionMap[item] + '</option>';
     }
     $('#devicePositionSelect').html(devicePositionHtml);
 
-    // 初始化设备数据
+    // 初始化設備數據
     syncDevices();
     syncGroups(initGroupData);
-    // 改变宽高
+    // 改變寬高
     $('#changeArea').on('click', function () {
       changeArea();
     });
 
-    // 重置画布大小
+    // 重置畫布大小
     areaScaleDom.on('click', '.reset', function (event) {
       event.preventDefault();
       changeAreaScale(1);
     });
-    // 缩小画布
+    // 縮小畫布
     areaScaleDom.on('click', '.narrow', function (event) {
       event.preventDefault();
       var prevScale = Number(areaScaleDom.attr('data-scale'));
       if (prevScale <= 0.25) {
-        alert('不能再缩小了');
+        alert('不能再縮小了');
         return;
       }
       changeAreaScale(Math.floor((prevScale / 2) * 100) / 100);
     });
-    // 放大画布
+    // 放大畫布
     areaScaleDom.on('click', '.enlarge', function (event) {
       event.preventDefault();
       var prevScale = Number(areaScaleDom.attr('data-scale'));
@@ -578,12 +578,12 @@
       }
       changeAreaScale(Math.floor((prevScale * 2) * 100) / 100);
     });
-    // 设置背景图片透明度
+    // 設置背景圖片透明度
     $('#opacity').on('change', function (e) {
       e.preventDefault();
       mainDom.css('background-color', 'rgba(255, 255, 255, ' + this.value + ')');
     });
-    // 设置背景图片
+    // 設置背景圖片
     $('#backgroundImage').on('change', function (e) {
       e.preventDefault();
       var file = this.files[0];
@@ -596,20 +596,20 @@
         };
       }
     });
-    // 显示二维码模态框
+    // 顯示二維碼模態框
     $('body').on('click', '.show-qr-code', function (e) {
       e.preventDefault();
-      // 设备ID
+      // 設備ID
       var id = this.parentNode.parentNode.getAttribute('data-id');
       $('#QRModal').show();
     });
     var QRModalDom = $('#QRModal');
     var qrcodeDom = $('#qrcode');
-    // 隐藏二维码模态框
+    // 隱藏二維碼模態框
     QRModalDom.on('click', '.close', function (e) {
       $('#QRModal').hide();
     });
-    // 缩小
+    // 縮小
     QRModalDom.on('click', '.narrow', function (e) {
       var width = qrcodeDom.width();
       if (width > 100) {
@@ -624,29 +624,29 @@
       }
     });
 
-    // 显示新增设备模态框
+    // 顯示新增設備模態框
     $('#showAddDeviceBtn').on('click', function () {
       addDeviceModalDom.show();
     });
-    // 关闭新增设备模态框
+    // 關閉新增設備模態框
     $('#closeAddDeviceBtn').on('click', function () {
       closeAddDeviceModal();
     });
-    // 新增设备
+    // 新增設備
     $('#AddDeviceBtn').on('click', function () {
       var deviceName = $('#deviceName').val();
       var deviceType = $('#deviceTypeSelect').val();
       var devicePosition = $('#devicePositionSelect').val();
       if (!deviceName) {
-        alert('请填写设备名称');
+        alert('請填寫設備名稱');
         return;
       }
       if (!deviceType) {
-        alert('请选择设备类型');
+        alert('請選擇設備類型');
         return;
       }
       if (!devicePosition) {
-        alert('请选择设备位置');
+        alert('請選擇設備位置');
         return;
       }
       var device = {
@@ -659,7 +659,7 @@
       syncDevices();
       closeAddDeviceModal();
     });
-    // 鼠标移入显示设备按钮
+    // 鼠標移入顯示設備按鈕
     deviceListWrapperDom.on('mouseenter', '.show-location', function (event) {
       event.preventDefault();
       hiddenMainDeviceListModal();
@@ -671,10 +671,10 @@
       var groupDom = document.querySelector('#main div[data-group-id="' + groupId + '"]');
       if (groupDom) {
         groupDom.classList.add('highlight');
-        groupDom.appendChild($('<p>在这</p>')[0]);
+        groupDom.appendChild($('<p>在這</p>')[0]);
       }
     });
-    // 鼠标移出显示设备按钮
+    // 鼠標移出顯示設備按鈕
     deviceListWrapperDom.on('mouseleave', '.show-location', function (event) {
       event.preventDefault();
       var parentNode = this.parentNode.parentNode;
@@ -688,14 +688,14 @@
       }
     });
 
-    // 删除设备按钮
+    // 刪除設備按鈕
     deviceListWrapperDom.on('click', '.delete', function (e) {
       e.preventDefault();
       var wrapperDom = this.parentNode.parentNode;
       var id = wrapperDom.getAttribute('data-id');
       var obj = devices[id];
       if (obj) {
-        // 根据ID查询,如果存在对应的选项,则从device中删除,并释放拖拽对象
+        // 根據ID查詢,如果存在對應的選項,則從device中刪除,並釋放拖拽對象
         var groupId = obj.groupId;
         if (groupId) {
           obj.groupId = null;
