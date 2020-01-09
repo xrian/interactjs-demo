@@ -285,7 +285,7 @@ interact('.draggable').draggable({
         // 如果對象中沒有位置,說明該對象沒有被拖動到擺放區
         // 該元素樣式可以自定義
         var groupId = groupSerialNumber++;
-        var drag = $('<div class="flag group" data-group-id="' + groupId + '" style="border: 1px solid #ccc;">1<p class="white">請拖放置紅框中</p></div>')[0];
+        var drag = $('<div class="flag group" data-group-id="' + groupId + '">1<p class="white">請拖放置紅框中</p></div>')[0];
         obj.groupId = groupId;
 
         mainDom.append(drag);

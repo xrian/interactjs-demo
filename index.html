@@ -32,7 +32,7 @@
       margin: 0 auto;
     }
 
-    .add-device-modal {
+    .modal, .add-device-modal {
       display: none;
       position: fixed;
       background-color: rgba(134, 130, 130, 0.8);
@@ -41,6 +41,10 @@
       top: 0;
       left: 0;
       z-index: 1;
+    }
+
+    .modal .container {
+      text-align: center;
     }
 
     .add-device-modal .add-device-form {
@@ -73,6 +77,7 @@
       flex-wrap: nowrap;
       align-items: flex-start;
       z-index: 1;
+      margin-bottom: 100px;
     }
 
     .body .operator-wrapper {
@@ -116,12 +121,8 @@
       cursor: move;
     }
 
-    /*.body .operator-wrapper .device-list-wrapper .draggable .show-location{*/
-    /*  display: none;*/
-    /*}*/
-    /* // TODO: 显示位置按钮先隐藏,功能未完成 */
     .body .operator-wrapper .device-list-wrapper .show-location {
-      display: none;
+
     }
 
     .body .main-wrapper {
@@ -141,7 +142,7 @@
     }
 
     .body .main-wrapper .main {
-      background-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.8);
       border: 1px red solid;
       position: relative;
     }
@@ -153,8 +154,23 @@
       left: 0;
       display: inline-block;
       padding: 2px;
+      height: 15px;
+      width: 15px;
       font-size: 12px;
-      background-color: red
+      line-height: 25px;
+      text-align: right;
+      color: red;
+      background-image: url("./images/Map_Marker_Ball_Pink_32px_1061216_easyicon.net.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+
+    .body .main-wrapper .main .group p {
+      background-color: red;
+      color: white;
+      width: 80px;
+      text-align: left;
+      padding: 5px;
     }
 
     .body .main-wrapper .main .group.can-drop {
@@ -162,7 +178,7 @@
       background-color: #4e4;
     }
 
-    .body .main-wrapper .main .group.drop-target{
+    .body .main-wrapper .main .group.drop-target {
       background-color: #29e;
       border-color: #fff;
       border-style: solid;
@@ -177,6 +193,16 @@
   </style>
 </head>
 <body>
+<div id="QRModal" class="modal">
+  <div class="container">
+    <div>
+      <button type="button" class="narrow">缩小</button>
+      <button type="button" class="enlarge">放大</button>
+      <button type="button" class="close">关闭</button>
+    </div>
+    <img id="qrcode" width="256" src="./images/erCode.png">
+  </div>
+</div>
 <div id="addDeviceModal" class="add-device-modal">
   <div class="add-device-form">
     <div class="close">
@@ -193,20 +219,6 @@
     </div>
   </div>
 </div>
-<div class="tips">
-  <div>使用说明:
-    <p>1. 输出长宽后,点击改变面积按钮,可以改变红框的大小</p>
-    <p>2. 可以上传背景图片</p>
-    <p>3. 可以设置背景图片的透明度</p>
-    <p>4. 点击设备列表中的新增按钮,可以新增设备.</p>
-    <p>5. 可以从设备列表拖动到红框中</p>
-    <p>6. 红框中的数字,代表在对应位置有多少台设备</p>
-    <p>7. 双击红框中的设备数字,可以展开对应位置的设备列表</p>
-    <p>7.1 点击隐藏,会将设备列表详情全部隐藏.</p>
-    <p>7.2 点击位置设备列表详情中的删除按钮,会将对应设备移除.(移除后可以重新从左边的列表拖进红框)</p>
-    <p>8. 坐标的设备列表,点击删除后,会将对应设备删除,并且已摆放的位置也会清空</p>
-  </div>
-</div>
 <div id="settingWrapper" class="setting-wrapper">
   <div class="title">设置面积</div>
   <div>
@@ -218,7 +230,7 @@
     设置背景图片
     <input type="file" name="backgroundImage" id="backgroundImage" accept="image/*" />
   </div>
-  <div>调整背景图片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.5"></div>
+  <div>调整背景图片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.8"></div>
 </div>
 
 <div class="body">
@@ -243,7 +255,20 @@
     <div class="background-image-div"></div>
   </div>
 </div>
-
+<div class="tips">
+  <div>使用说明:
+    <p>1. 输出长宽后,点击改变面积按钮,可以改变红框的大小</p>
+    <p>2. 可以上传背景图片</p>
+    <p>3. 可以设置背景图片的透明度</p>
+    <p>4. 点击设备列表中的新增按钮,可以新增设备.</p>
+    <p>5. 可以从设备列表拖动到红框中</p>
+    <p>6. 红框中的数字,代表在对应位置有多少台设备</p>
+    <p>7. 双击红框中的设备数字,可以展开对应位置的设备列表</p>
+    <p>7.1 点击隐藏,会将设备列表详情全部隐藏.</p>
+    <p>7.2 点击位置设备列表详情中的删除按钮,会将对应设备移除.(移除后可以重新从左边的列表拖进红框)</p>
+    <p>8. 坐标的设备列表,点击删除后,会将对应设备删除,并且已摆放的位置也会清空</p>
+  </div>
+</div>
 <script type="text/javascript" src="./js/jquery-1.12.4.min.js"></script>
 <script src="./js/interact.min.js"></script>
 <script src="./js/draggable.js?v=0.0.4"></script>
@@ -342,7 +367,7 @@
           '<div class="device-name"><span class="gray">设备名称:</span><span>' + item.name + '</span></div>' +
           '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] +
           '</span></div>' +
-          '<div><button type="button" class="show-location">查看位置</button><button type="button" class="delete">删除</button></div>' +
+          '<div><button type="button" class="show-location">查看位置</button><button type="button" class="show-qr-code">查看二维码</button><button type="button" class="delete">删除</button></div>' +
           '</div>');
         deviceListWrapperDom.append(dom);
         item.dom = dom[0];
@@ -385,6 +410,34 @@
         };
       }
     });
+    // 显示二维码模态框
+    $('body').on('click', '.show-qr-code', function (e) {
+      e.preventDefault();
+      // 设备ID
+      var id = this.parentNode.parentNode.getAttribute('data-id');
+      $('#QRModal').show();
+    });
+    var QRModalDom = $('#QRModal');
+    var qrcodeDom = $('#qrcode');
+    // 隐藏二维码模态框
+    QRModalDom.on('click', '.close', function (e) {
+      $('#QRModal').hide();
+    });
+    // 缩小
+    QRModalDom.on('click', '.narrow', function (e) {
+      var width = qrcodeDom.width();
+      if (width > 100) {
+        qrcodeDom.width(width / 2);
+      }
+    });
+    // 放大
+    QRModalDom.on('click', '.enlarge', function (e) {
+      var width = qrcodeDom.width() * 2;
+      if (width < $(window).width()) {
+        qrcodeDom.width(width);
+      }
+    });
+
     // 显示新增设备模态框
     $('#showAddDeviceBtn').on('click', function () {
       addDeviceModalDom.show();
