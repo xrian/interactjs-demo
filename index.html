@@ -32,6 +32,10 @@
       margin: 0 auto;
     }
 
+    .setting-wrapper > div {
+      margin-bottom: 10px;
+    }
+
     .modal, .add-device-modal {
       display: none;
       position: fixed;
@@ -166,7 +170,7 @@
       background-size: 100% 100%;
     }
 
-    .body .main-wrapper .main .group.highlight{
+    .body .main-wrapper .main .group.highlight {
       background-color: yellow;
     }
 
@@ -230,8 +234,8 @@
   </div>
 </div>
 <div id="settingWrapper" class="setting-wrapper">
-  <div class="title">设置面积</div>
   <div>
+    <div class="title">设置面积</div>
     <div>长:<input type="number" name="roomLength" id="roomLength" value="500"></div>
     <div>宽:<input type="number" name="roomWidth" id="roomWidth" value="800"></div>
     <button type="button" id="changeArea">改变面积大小</button>
@@ -241,6 +245,13 @@
     <input type="file" name="backgroundImage" id="backgroundImage" accept="image/*" />
   </div>
   <div>调整背景图片不透明度:<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.1" value="0.8"></div>
+  <div id="areaScale" class="area-scale" data-scale="1">
+    <span>画布设置:</span>
+    <button type="button" class="reset">恢复画布默认比例</button>
+    <button type="button" class="narrow">缩小</button>
+    <button type="button" class="enlarge">放大</button>
+    <span class="text">1:<span class="num">1</span></span>
+  </div>
 </div>
 
 <div class="body">
@@ -345,6 +356,7 @@
   var addDeviceModalDom = $('#addDeviceModal');
   var deviceListWrapperDom = $('#deviceListWrapper');
   var mainDom = $('#main');
+  var areaScaleDom = $('#areaScale');
   // 设备对象.
   var devices = {};
   // 将初始化数据列表转换为 object,ID 为 key
@@ -366,7 +378,40 @@
       return;
     }
     mainDom.width(width + 'px').height(height + 'px');
+    mainDom.attr('data-width', width);
+    mainDom.attr('data-height', height);
     backgroundImageDivDom.width(width + 'px').height(height + 'px');
+  }
+
+  /**
+   * 改变画布比例
+   * @param next 改变后的画布比例
+   */
+  function changeAreaScale(next) {
+    // 先隐藏全部设备详情
+    hiddenMainDeviceListModal();
+    // 获取当前比例
+    var prevScale = Number(areaScaleDom.attr('data-scale'));
+    var scale = Math.floor(next / prevScale * 100) / 100;
+    var areaWidth = (mainDom.width() * scale).toFixed(2);
+    var areaHeight = (mainDom.height() * scale).toFixed(2);
+    // 更新面积div 宽高, 只保留两位小数
+    mainDom.width(areaWidth + 'px').height(areaHeight + 'px');
+    backgroundImageDivDom.width(areaWidth + 'px').height(areaHeight + 'px');
+    // 更新分组坐标
+    mainDom.children('.group').each(function (index, item) {
+      // 当画布比例改变时,以子div的中心更新位置
+      var domByJq = $(this);
+      var originWidth = domByJq.width();
+      var originHeight = domByJq.height();
+      var x = Number(domByJq.attr('data-x')) + originWidth / 2;
+      var y = Number(domByJq.attr('data-y')) + originHeight / 2;
+      x = x * scale - originWidth / 2;
+      y = y * scale - originHeight / 2;
+      moveDomByCss(this, x, y);
+    });
+    areaScaleDom.attr('data-scale', next);
+    areaScaleDom.find('.num').html(next);
   }
 
   // 清除新增设备表单并关闭模态窗
@@ -387,8 +432,10 @@
           '<div class="device-wrapper draggable" id="' + deviceWrapperIdTemplate.replace('@ID', key) + '" data-id="' +
           key + '">' +
           '<div class="device-name"><span class="gray">设备名称:</span><span>' + item.name + '</span></div>' +
-          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] + '</span></div>' +
-          '<div class="device-position"><span class="gray">设备位置:</span><span class="">' + devicePositionMap[item.devicePosition] +
+          '<div class="device-type"><span class="gray">设备类型:</span><span class="">' + deviceTypeMap[item.type] +
+          '</span></div>' +
+          '<div class="device-position"><span class="gray">设备位置:</span><span class="">' +
+          devicePositionMap[item.devicePosition] +
           '</span></div>' +
           '<div><button type="button" class="show-location">查看坐标</button><button type="button" class="show-qr-code">查看二维码</button><button type="button" class="delete">删除</button></div>' +
           '</div>');
@@ -420,6 +467,32 @@
     // 改变宽高
     $('#changeArea').on('click', function () {
       changeArea();
+    });
+
+    // 重置画布大小
+    areaScaleDom.on('click', '.reset', function (event) {
+      event.preventDefault();
+      changeAreaScale(1);
+    });
+    // 缩小画布
+    areaScaleDom.on('click', '.narrow', function (event) {
+      event.preventDefault();
+      var prevScale = Number(areaScaleDom.attr('data-scale'));
+      if (prevScale <= 0.25) {
+        alert('不能再缩小了');
+        return;
+      }
+      changeAreaScale(Math.floor((prevScale / 2) * 100) / 100);
+    });
+    // 放大画布
+    areaScaleDom.on('click', '.enlarge', function (event) {
+      event.preventDefault();
+      var prevScale = Number(areaScaleDom.attr('data-scale'));
+      if (prevScale > 20) {
+        alert('不能再放大了');
+        return;
+      }
+      changeAreaScale(Math.floor((prevScale * 2) * 100) / 100);
     });
     // 设置背景图片透明度
     $('#opacity').on('change', function (e) {
@@ -503,7 +576,7 @@
       closeAddDeviceModal();
     });
     // 鼠标移入显示设备按钮
-    deviceListWrapperDom.on('mouseenter', '.show-location',function (event) {
+    deviceListWrapperDom.on('mouseenter', '.show-location', function (event) {
       event.preventDefault();
       hiddenMainDeviceListModal();
       var parentNode = this.parentNode.parentNode;
@@ -511,21 +584,21 @@
       debugger;
       var device = devices[id];
       var groupId = device.groupId;
-      var groupDom =  document.querySelector('#main div[data-group-id="'+groupId+'"]');
-      if(groupDom){
+      var groupDom = document.querySelector('#main div[data-group-id="' + groupId + '"]');
+      if (groupDom) {
         groupDom.classList.add('highlight');
         groupDom.appendChild($('<p>在这</p>')[0]);
       }
     });
     // 鼠标移出显示设备按钮
-    deviceListWrapperDom.on('mouseleave', '.show-location',function (event) {
+    deviceListWrapperDom.on('mouseleave', '.show-location', function (event) {
       event.preventDefault();
       var parentNode = this.parentNode.parentNode;
       var id = parentNode.getAttribute('data-id');
       var device = devices[id];
       var groupId = device.groupId;
-      var groupDom =  document.querySelector('#main div[data-group-id="'+groupId+'"]');
-      if(groupDom){
+      var groupDom = document.querySelector('#main div[data-group-id="' + groupId + '"]');
+      if (groupDom) {
         groupDom.classList.remove('highlight');
         groupDom.querySelector('p').remove();
       }
